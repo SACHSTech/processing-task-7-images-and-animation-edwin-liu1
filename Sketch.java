@@ -10,7 +10,7 @@ public class Sketch extends PApplet {
 
   // global variables
 
-  Ball ball = new Ball(100, 100, 5, 5, 20);
+  Ball ball = new Ball(100, 100, -5, -5, 20);
 
   public void settings() {
 	// put your size call here
@@ -50,22 +50,22 @@ public class Sketch extends PApplet {
       yspeed = velY;
       size = ballSize;
     }
-    public void update(){
+    void update(){
 
-      if( (yspeed > 0) && ( Math.round(ypos) >= (height - size) ) ){
+      //if( (yspeed > 0) && (Math.round(ypos) >= (height - size) ) ){
         if ( ( (xpos >= (width - size) ) && xspeed > 0) || ( (xpos <= size) && xspeed < 0)){
           xspeed *= -0.6;
           yspeed *= 0.9;
         }
-        if (ypos >= height - size || ypos <= size){
+        if ( (ypos >= height - size && yspeed > 0) || (ypos <= size && yspeed < 0) ){
           yspeed *= -0.8;
           xspeed *= 0.8;
         }
-      }
       yspeed += 0.5;
 
-      xpos += xspeed;
       ypos += yspeed;
+      xpos += xspeed;
+      //}
 
       fill (255);
       circle(xpos, ypos, size);
