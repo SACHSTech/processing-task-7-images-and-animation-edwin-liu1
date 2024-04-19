@@ -10,7 +10,10 @@ public class Sketch extends PApplet {
 
   // global variables
 
-  Ball ball = new Ball(100, 100, -5, -5, 20);
+  // array
+  Ball[] balls;
+
+  Ball ball = new Ball(100, 100, -5, -5, 20); // test
 
   public void settings() {
 	// put your size call here
@@ -23,10 +26,13 @@ public class Sketch extends PApplet {
    */
   public void setup() {
 
+    balls = new Ball[0];
+
     // need to get an image...
 
     // background = loadImage("");
 
+    frameRate(60);
     background(0);
   }
 
@@ -35,9 +41,15 @@ public class Sketch extends PApplet {
    */
   public void draw() {
 	  background(0);
-    ball.update();
+    for (int i = 0; i <= balls.length; i++){
+      balls[i].update();
+    }
 	// sample code, delete this stuff
     
+  }
+
+  public void mouseClicked(){
+    append(balls, new Ball(mouseX, mouseY, mouseX - pmouseX, mouseY - pmouseY, 20) );
   }
   
   class Ball {
@@ -51,8 +63,7 @@ public class Sketch extends PApplet {
       size = ballSize;
     }
     void update(){
-
-      //if( (yspeed > 0) && (Math.round(ypos) >= (height - size) ) ){
+      if (ypos < height - size || Math.round(yspeed) > 0){
         if ( ( (xpos >= (width - size) ) && xspeed > 0) || ( (xpos <= size) && xspeed < 0)){
           xspeed *= -0.6;
           yspeed *= 0.9;
@@ -62,14 +73,17 @@ public class Sketch extends PApplet {
           xspeed *= 0.8;
         }
       yspeed += 0.5;
+      }
 
       ypos += yspeed;
       xpos += xspeed;
-      //}
 
       fill (255);
       circle(xpos, ypos, size);
     }
   }
 
+  public void sorting(){
+    
+  }
 }
