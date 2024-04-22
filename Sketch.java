@@ -46,13 +46,13 @@ public class Sketch extends PApplet {
 
     // ball.update();  // test code for object testing
 
-    // cool array and enhanced loop
+    // cool enhanced loop
     for(Rain drop : rain){
       drop.update();
       drop.display();
     }
 
-    // arraylist
+    // ball array stuff
     for (int i = 0; i < balls.size(); i++){ // goes through the list of all ball instances
       Ball part = balls.get(i);             // gets the ball object
       part.update();  
