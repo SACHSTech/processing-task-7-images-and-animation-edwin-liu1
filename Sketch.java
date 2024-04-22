@@ -1,57 +1,74 @@
+import java.util.ArrayList;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 
 public class Sketch extends PApplet {
 
-  // need to get images...
 
-  // Pimage background;
-  // Pimage ;
+  // images
+  PImage background;
+  PImage basketball;
 
-  // global variables
+  // balls array list
+  ArrayList<Ball>balls = new ArrayList<Ball>(); // makes an array list for spawnable ball objects
 
-  // array
-  Ball[] balls;
+  // rain array
+  Rain rain[] = new Rain[Math.round(random(20, 30) ) ];
 
-  Ball ball = new Ball(100, 100, -5, -5, 20); // test
+  // Ball ball = new Ball(100, 100, -5, -5, 30); // ball test object
 
   public void settings() {
 	// put your size call here
     size(800, 800);
   }
 
-  /** 
-   * Called once at the beginning of execution.  Add initial set up
-   * values here i.e background, stroke, fill etc.
-   */
   public void setup() {
 
-    balls = new Ball[0];
+    // rain set up
+    for (int i = 0; i < rain.length; i++){
+      rain[i] = new Rain( random(width), random(height), random(height / 10, height / 5), random(1, 3) );
+    } 
 
-    // need to get an image...
+    // images
+    basketball = loadImage("Ball.png");
+    basketball.resize(30,30);
 
-    // background = loadImage("");
+    background = loadImage("Shrimp Ballin!.jpg");
+    background.resize(width, height);
 
-    frameRate(60);
-    background(0);
+    background(background);
+
   }
 
-  /**
-   * Called repeatedly, anything drawn to the screen goes here
-   */
   public void draw() {
-	  background(0);
-    for (int i = 0; i <= balls.length; i++){
-      balls[i].update();
+	  background(background);
+
+    // ball.update();  // test code for object testing
+
+    // cool array and enhanced loop
+    for(Rain drop : rain){
+      drop.update();
+      drop.display();
     }
-	// sample code, delete this stuff
-    
+
+    // arraylist
+    for (int i = 0; i < balls.size(); i++){ // goes through the list of all ball instances
+      Ball part = balls.get(i);             // gets the ball object
+      part.update();  
+      part.display();                      // updates each ball instance
+      if (part.tooLow() == true){           // checking for balls below the screen and deleting them
+        balls.remove(i);                    // removes it
+      }
+    }
+
   }
 
   public void mouseClicked(){
-    append(balls, new Ball(mouseX, mouseY, mouseX - pmouseX, mouseY - pmouseY, 20) );
+    balls.add(new Ball(mouseX, mouseY, random(-5, 5), random(-5, 5), 30) );
   }
   
+  // ball object
   class Ball {
     float xpos, ypos, xspeed, yspeed;
     int size;
@@ -62,28 +79,61 @@ public class Sketch extends PApplet {
       yspeed = velY;
       size = ballSize;
     }
+    // run to get the balls moving with gravity
     void update(){
-      if (ypos < height - size || Math.round(yspeed) > 0){
-        if ( ( (xpos >= (width - size) ) && xspeed > 0) || ( (xpos <= size) && xspeed < 0)){
-          xspeed *= -0.6;
-          yspeed *= 0.9;
-        }
-        if ( (ypos >= height - size && yspeed > 0) || (ypos <= size && yspeed < 0) ){
-          yspeed *= -0.8;
-          xspeed *= 0.8;
-        }
-      yspeed += 0.5;
+      if ( ( (xpos >= (width - (size / 2) ) ) && xspeed > 0) || ( (xpos <= (size / 2) ) && xspeed < 0)){
+        xspeed *= -0.6;
+        yspeed *= 0.95;
+      }
+      if ( (ypos >= height - (size / 2) && yspeed > 0) || (ypos <= (size / 2) && yspeed < 0) ){
+        yspeed *= -0.9;
+        xspeed *= 0.8;
       }
 
+      yspeed += 0.5;  // this should be after the change position code. but i'm too lazy to accutally code the ball sinking so it stays.
+
+      // position change code
       ypos += yspeed;
       xpos += xspeed;
-
-      fill (255);
-      circle(xpos, ypos, size);
+    }
+    void display(){
+      image(basketball, xpos - (size / 2), ypos - (size / 2) );
+    }
+    // detects if the ball has moved to low off the screen
+    boolean tooLow(){
+      boolean low = false;
+      if (ypos > height + (size * 1.5) ){
+        low = true;
+      }
+      return low;
     }
   }
 
-  public void sorting(){
-    
+  class Rain {
+    float xpos, ypos, scale, length;
+    Rain(float x, float y, float size, float thickness){
+      xpos = x;
+      ypos = y;
+      length = size;
+      scale = thickness;
+    }
+
+    void update(){
+      if (ypos >= height + length){
+        xpos = random(width);
+        ypos = 0;
+        length = random( (height / 10), (height / 5) );
+        scale = random(1, 3);
+      }
+        ypos += 10;
+    }
+
+    void display(){
+      stroke(60, 92, 250);
+      strokeWeight(scale);
+      line(xpos, ypos, xpos, ypos - length);
+    }
   }
 }
+
+// the code is very much scuffed and will need to be coded and commented better
